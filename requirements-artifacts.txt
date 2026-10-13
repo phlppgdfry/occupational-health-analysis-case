@@ -1,0 +1,2 @@
+# Optional, for rebuilding PDF deliverables. Not needed for the app or core checks.
+reportlab==5.0.0

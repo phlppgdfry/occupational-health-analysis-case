@@ -1,0 +1,251 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_Aster" targetNamespace="https://example.invalid/aster" exporter="Aster portfolio model generator" exporterVersion="1.0">
+  <bpmn:process id="Process_Planning" name="Administratieve planning en opvolging" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_1">
+      <bpmn:lane id="Lane_Planner" name="Planner">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Check</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Complete</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Choose</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Reserve</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Free</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Wait</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CancelEvent</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Cancel</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Reopen</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ReplanChoice</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CancelEnd</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Coordinator" name="Coördinator">
+        <bpmn:flowNodeRef>Ended</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Outcome</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Aanvraag ontvangen">
+      <bpmn:outgoing>F_Start</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Check" name="Controleer en vul gegevens aan">
+      <bpmn:incoming>F_Start</bpmn:incoming>
+      <bpmn:incoming>F_Incomplete</bpmn:incoming>
+      <bpmn:outgoing>F_Check</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Complete" name="Volledig?" default="F_Incomplete">
+      <bpmn:incoming>F_Check</bpmn:incoming>
+      <bpmn:outgoing>F_Incomplete</bpmn:outgoing>
+      <bpmn:outgoing>F_Complete</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Choose" name="Kies passend tijdslot">
+      <bpmn:incoming>F_Complete</bpmn:incoming>
+      <bpmn:incoming>F_Conflict</bpmn:incoming>
+      <bpmn:incoming>F_Replan</bpmn:incoming>
+      <bpmn:outgoing>F_Choose</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Reserve" name="Controleer en reserveer">
+      <bpmn:incoming>F_Choose</bpmn:incoming>
+      <bpmn:outgoing>F_Reserve</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Free" name="Boeking gelukt?" default="F_Conflict">
+      <bpmn:incoming>F_Reserve</bpmn:incoming>
+      <bpmn:outgoing>F_Conflict</bpmn:outgoing>
+      <bpmn:outgoing>F_Free</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:eventBasedGateway id="Wait" name="Wacht op vervolg">
+      <bpmn:incoming>F_Free</bpmn:incoming>
+      <bpmn:outgoing>F_CancelMessage</bpmn:outgoing>
+      <bpmn:outgoing>F_Elapsed</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="CancelEvent" name="Annulering gevraagd">
+      <bpmn:incoming>F_CancelMessage</bpmn:incoming>
+      <bpmn:outgoing>F_Cancel</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="Message_Cancel_Def" messageRef="Message_Cancel" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:serviceTask id="Cancel" name="Annuleer en geef vrij">
+      <bpmn:incoming>F_Cancel</bpmn:incoming>
+      <bpmn:outgoing>F_AfterCancel</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Reopen" name="Heropen voor herplanning">
+      <bpmn:incoming>F_Reopen</bpmn:incoming>
+      <bpmn:outgoing>F_Replan</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateCatchEvent id="Ended" name="Afspraak afgelopen">
+      <bpmn:incoming>F_Elapsed</bpmn:incoming>
+      <bpmn:outgoing>F_Outcome</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="Timer_End_Def" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:userTask id="Outcome" name="Registreer administratieve uitkomst">
+      <bpmn:incoming>F_Outcome</bpmn:incoming>
+      <bpmn:outgoing>F_End</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="End" name="Afgesloten">
+      <bpmn:incoming>F_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="ReplanChoice" name="Herplannen?" default="F_NoReplan">
+      <bpmn:incoming>F_AfterCancel</bpmn:incoming>
+      <bpmn:outgoing>F_Reopen</bpmn:outgoing>
+      <bpmn:outgoing>F_NoReplan</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="CancelEnd" name="Geannuleerd behouden">
+      <bpmn:incoming>F_NoReplan</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F_Start" sourceRef="Start" targetRef="Check" />
+    <bpmn:sequenceFlow id="F_Check" sourceRef="Check" targetRef="Complete" />
+    <bpmn:sequenceFlow id="F_Incomplete" sourceRef="Complete" targetRef="Check" name="Onvolledig" />
+    <bpmn:sequenceFlow id="F_Complete" sourceRef="Complete" targetRef="Choose" name="Volledig">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">complete</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_Choose" sourceRef="Choose" targetRef="Reserve" />
+    <bpmn:sequenceFlow id="F_Reserve" sourceRef="Reserve" targetRef="Free" />
+    <bpmn:sequenceFlow id="F_Conflict" sourceRef="Free" targetRef="Choose" name="Conflict" />
+    <bpmn:sequenceFlow id="F_Free" sourceRef="Free" targetRef="Wait" name="Bevestigd">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">reserved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_CancelMessage" sourceRef="Wait" targetRef="CancelEvent" />
+    <bpmn:sequenceFlow id="F_Elapsed" sourceRef="Wait" targetRef="Ended" />
+    <bpmn:sequenceFlow id="F_Cancel" sourceRef="CancelEvent" targetRef="Cancel" />
+    <bpmn:sequenceFlow id="F_Replan" sourceRef="Reopen" targetRef="Choose" />
+    <bpmn:sequenceFlow id="F_Outcome" sourceRef="Ended" targetRef="Outcome" />
+    <bpmn:sequenceFlow id="F_End" sourceRef="Outcome" targetRef="End" />
+    <bpmn:sequenceFlow id="F_AfterCancel" sourceRef="Cancel" targetRef="ReplanChoice" />
+    <bpmn:sequenceFlow id="F_Reopen" sourceRef="ReplanChoice" targetRef="Reopen" name="Ja">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">replanningRequested</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_NoReplan" sourceRef="ReplanChoice" targetRef="CancelEnd" name="Nee" />
+  </bpmn:process>
+  <bpmn:message id="Message_Cancel" name="Administratief annuleringsverzoek" />
+  <bpmn:collaboration id="Collaboration_Aster">
+    <bpmn:participant id="Participant_Aster" name="Aster Preventie" processRef="Process_Planning" />
+  </bpmn:collaboration>
+  <bpmndi:BPMNDiagram id="Diagram_Planning">
+    <bpmndi:BPMNPlane id="Plane_Planning" bpmnElement="Collaboration_Aster">
+      <bpmndi:BPMNShape id="Shape_Participant_Aster" bpmnElement="Participant_Aster" isHorizontal="true">
+        <dc:Bounds x="20" y="40" width="1190" height="450" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Lane_Planner" bpmnElement="Lane_Planner" isHorizontal="true">
+        <dc:Bounds x="50" y="40" width="1160" height="285" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Lane_Coordinator" bpmnElement="Lane_Coordinator" isHorizontal="true">
+        <dc:Bounds x="50" y="325" width="1160" height="165" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Start" bpmnElement="Start">
+        <dc:Bounds x="90" y="120" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Check" bpmnElement="Check">
+        <dc:Bounds x="160" y="100" width="150" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Complete" bpmnElement="Complete">
+        <dc:Bounds x="365" y="112" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Choose" bpmnElement="Choose">
+        <dc:Bounds x="465" y="100" width="145" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Reserve" bpmnElement="Reserve">
+        <dc:Bounds x="675" y="100" width="145" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Free" bpmnElement="Free">
+        <dc:Bounds x="870" y="112" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Wait" bpmnElement="Wait">
+        <dc:Bounds x="970" y="112" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_CancelEvent" bpmnElement="CancelEvent">
+        <dc:Bounds x="1030" y="240" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Cancel" bpmnElement="Cancel">
+        <dc:Bounds x="890" y="220" width="135" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Reopen" bpmnElement="Reopen">
+        <dc:Bounds x="675" y="220" width="145" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Ended" bpmnElement="Ended">
+        <dc:Bounds x="1060" y="390" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Outcome" bpmnElement="Outcome">
+        <dc:Bounds x="870" y="365" width="155" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End" bpmnElement="End">
+        <dc:Bounds x="760" y="388" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_ReplanChoice" bpmnElement="ReplanChoice">
+        <dc:Bounds x="805" y="232" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_CancelEnd" bpmnElement="CancelEnd">
+        <dc:Bounds x="1120" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_F_Start" bpmnElement="F_Start">
+        <di:waypoint x="108.0" y="138.0" />
+        <di:waypoint x="235.0" y="137.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_Check" bpmnElement="F_Check">
+        <di:waypoint x="235.0" y="137.5" />
+        <di:waypoint x="390.0" y="137.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_Incomplete" bpmnElement="F_Incomplete">
+        <di:waypoint x="390.0" y="112" />
+        <di:waypoint x="390.0" y="65" />
+        <di:waypoint x="235.0" y="65" />
+        <di:waypoint x="235.0" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_Complete" bpmnElement="F_Complete">
+        <di:waypoint x="390.0" y="137.0" />
+        <di:waypoint x="537.5" y="137.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_Choose" bpmnElement="F_Choose">
+        <di:waypoint x="537.5" y="137.5" />
+        <di:waypoint x="747.5" y="137.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_Reserve" bpmnElement="F_Reserve">
+        <di:waypoint x="747.5" y="137.5" />
+        <di:waypoint x="895.0" y="137.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_Conflict" bpmnElement="F_Conflict">
+        <di:waypoint x="895.0" y="112" />
+        <di:waypoint x="895.0" y="65" />
+        <di:waypoint x="537.5" y="65" />
+        <di:waypoint x="537.5" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_Free" bpmnElement="F_Free">
+        <di:waypoint x="895.0" y="137.0" />
+        <di:waypoint x="995.0" y="137.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_CancelMessage" bpmnElement="F_CancelMessage">
+        <di:waypoint x="995.0" y="137.0" />
+        <di:waypoint x="1048.0" y="258.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_Elapsed" bpmnElement="F_Elapsed">
+        <di:waypoint x="995.0" y="137.0" />
+        <di:waypoint x="1078.0" y="408.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_Cancel" bpmnElement="F_Cancel">
+        <di:waypoint x="1048.0" y="258.0" />
+        <di:waypoint x="957.5" y="257.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_Replan" bpmnElement="F_Replan">
+        <di:waypoint x="747.5" y="220" />
+        <di:waypoint x="747.5" y="190" />
+        <di:waypoint x="537.5" y="190" />
+        <di:waypoint x="537.5" y="175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_Outcome" bpmnElement="F_Outcome">
+        <di:waypoint x="1078.0" y="408.0" />
+        <di:waypoint x="947.5" y="405.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_End" bpmnElement="F_End">
+        <di:waypoint x="947.5" y="405.0" />
+        <di:waypoint x="778.0" y="406.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_AfterCancel" bpmnElement="F_AfterCancel">
+        <di:waypoint x="957.5" y="257.5" />
+        <di:waypoint x="830.0" y="257.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_Reopen" bpmnElement="F_Reopen">
+        <di:waypoint x="830.0" y="257.0" />
+        <di:waypoint x="747.5" y="257.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_F_NoReplan" bpmnElement="F_NoReplan">
+        <di:waypoint x="830.0" y="257.0" />
+        <di:waypoint x="1138.0" y="260.0" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

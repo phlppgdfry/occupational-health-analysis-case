@@ -1,0 +1,2 @@
+# Optional full BPMN XSD validation. Not needed for the app or core checks.
+lxml==6.1.1

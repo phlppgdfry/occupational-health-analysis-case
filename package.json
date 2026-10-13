@@ -1,0 +1,15 @@
+{
+  "name": "occupational-health-analysis-case",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Fictional occupational-health scheduling module: analysis, executable rules and static prototype",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm test && python3 scripts/check-links.py && python3 scripts/check-models.py",
+    "dev": "python3 -m http.server 8047 --directory site",
+    "test:ui": "node tests/browser.mjs"
+  },
+  "devDependencies": { "@playwright/test": "1.63.0" },
+  "engines": { "node": ">=22", "python": ">=3.11" }
+}

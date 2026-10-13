@@ -1,0 +1,479 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Aster administrative scheduling - design contract",
+    "version": "1.0.0",
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "description": "Fictional portfolio API design. No backend implemented. Role comes from verified identity, not command payload."
+  },
+  "servers": [
+    {
+      "url": "https://api.example.invalid/v1",
+      "description": "Design placeholder only"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Requests",
+      "description": "Administrative request commands"
+    }
+  ],
+  "paths": {
+    "/requests/{requestId}": {
+      "get": {
+        "tags": [
+          "Requests"
+        ],
+        "summary": "Read one administrative request",
+        "operationId": "getRequest",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Administrative request identifier; tenant authorization is server-side."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing identity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Outside authorized scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Request not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requests/{requestId}/commands": {
+      "post": {
+        "tags": [
+          "Requests"
+        ],
+        "summary": "Apply a versioned, idempotent command",
+        "operationId": "executeCommand",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Administrative request identifier; tenant authorization is server-side."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Complete"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Schedule"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Cancel"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Reopen"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Outcome"
+                  }
+                ]
+              },
+              "example": {
+                "action": "cancel",
+                "version": 3,
+                "key": "client-9e08",
+                "reason": "Medewerker verhinderd"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Committed or replayed command",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing identity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role or scope denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Request not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "STALE_VERSION, SLOT_CONFLICT or KEY_REUSED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation, status or time rule rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporary service failure; retry identical key and payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Production only: identity and tenant verified server-side."
+      }
+    },
+    "schemas": {
+      "Complete": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "version",
+          "key",
+          "type",
+          "workpost"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "complete"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "periodic",
+              "intake"
+            ]
+          },
+          "workpost": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        }
+      },
+      "Schedule": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "version",
+          "key",
+          "slotId"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "schedule"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "slotId": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "Cancel": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "version",
+          "key",
+          "reason"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "cancel"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          }
+        }
+      },
+      "Reopen": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "version",
+          "key"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "reopen"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        }
+      },
+      "Outcome": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "version",
+          "key",
+          "outcome"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "outcome"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "completed",
+              "no_show"
+            ]
+          }
+        }
+      },
+      "Request": {
+        "type": "object",
+        "required": [
+          "id",
+          "employee",
+          "employer",
+          "type",
+          "workpost",
+          "status",
+          "version",
+          "slotId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "employee": {
+            "type": "string"
+          },
+          "employer": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "periodic",
+              "intake"
+            ]
+          },
+          "workpost": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "incomplete",
+              "ready",
+              "scheduled",
+              "cancelled",
+              "completed",
+              "no_show"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "slotId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "CommandResult": {
+        "type": "object",
+        "required": [
+          "request",
+          "replayed"
+        ],
+        "properties": {
+          "request": {
+            "$ref": "#/components/schemas/Request"
+          },
+          "replayed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "correlationId": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

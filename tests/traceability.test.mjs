@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { seed, execute } from '../site/assets/domain.mjs';
+const model=JSON.parse(readFileSync(new URL('../site/assets/case.json',import.meta.url)));
+test('Requirement test references exist as named acceptance IDs',()=>{const source=readFileSync(new URL('./domain.test.mjs',import.meta.url),'utf8');for(const r of model.requirements)for(const id of r.tests)assert.ok(source.includes(`${id}:`),`${r.id} -> ${id}`);});
+test('Every Must has an owner, rule, criterion and measurement definition',()=>{for(const r of model.requirements.filter(r=>r.priority==='Must')){assert.ok(r.owner&&r.rule&&r.acceptance&&r.tests.length);assert.ok(model.kpis.some(k=>k.id===r.kpi));}});
+test('Dossier and active capacity invariants hold through the complete journey',()=>{let s=seed();const commands=[{action:'complete',type:'periodic',workpost:'Montage'},{action:'schedule',slotId:'S-02'},{action:'cancel',reason:'Verhinderd'},{action:'reopen'},{action:'schedule',slotId:'S-04'}];for(const [i,command] of commands.entries()){s=execute(s,{...command,caseId:'OH-001',version:i+1,key:`journey-${i}`}).state;for(const c of s.cases){assert.equal(Boolean(c.slotId),c.status==='scheduled');assert.ok(c.version>=1);}assert.equal(s.events.length,i+2);}});
+test('Prototype-shaped keys cannot hijack the processed-command dictionary',()=>{const s=execute(seed(),{action:'schedule',caseId:'OH-002',version:1,key:'constructor',slotId:'S-02'}).state;assert.equal(s.cases[1].status,'scheduled');const p=execute(seed(),{action:'schedule',caseId:'OH-002',version:1,key:'__proto__',slotId:'S-02'}).state;assert.equal(Object.getPrototypeOf(p.processed),Object.prototype);assert.equal(Object.hasOwn(p.processed,'__proto__'),true);});
