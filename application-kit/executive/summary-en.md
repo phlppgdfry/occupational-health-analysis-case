@@ -20,4 +20,4 @@ The central trace is P-03 → FR-04 → R-04 → AC-15 → K-04. The test cancel
 
 The browser prototype has simulated roles, a local activity log and a simulated outbox. It provides no clinical records, real authentication, backend transactions or notification delivery. Production concurrency and tenant authorization remain explicit implementation conditions. All KPI figures are illustrative assumptions, not measured benefits.
 
-[Reading paths](../../START-HERE.md) · [Prototype](../../site/demo/index.html?tour)
+[Reading paths](../../START-HERE.md) · [Prototype](https://phlppgdfry.github.io/occupational-health-analysis-case/demo/?tour)

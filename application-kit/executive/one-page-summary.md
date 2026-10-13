@@ -22,6 +22,6 @@ P-03 → FR-04 → R-04 → AC-15 → K-04 verbindt één klantvraag met specifi
 
 Alle data en organisaties zijn fictief. De demo heeft geen echte login, medische dossiers, servertransacties of berichtaflevering. Illustratieve KPI's zijn geen behaalde resultaten. Geen klant-UAT of productie-implementatie wordt geclaimd.
 
-[Leesroute](../../START-HERE.md) · [Demo](../../site/demo/index.html?tour) · [Specificatie](../../docs/02-requirements/functional-spec.md)
+[Leesroute](../../START-HERE.md) · [Demo](https://phlppgdfry.github.io/occupational-health-analysis-case/demo/?tour) · [Specificatie](../../docs/02-requirements/functional-spec.md)
 
 Independent portfolio case study based on a fictional organisation. No confidential employer information.

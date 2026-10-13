@@ -20,4 +20,4 @@ Le prototype et les tests utilisent les mêmes règles de domaine. Les contrôle
 
 Les données sont fictives. L'identité, les notifications et le journal sont simulés dans le navigateur. Les transactions, la concurrence et l'autorisation d'une véritable API doivent encore être mises en œuvre et testées. Les indicateurs chiffrés sont des hypothèses illustratives, pas des résultats obtenus.
 
-[Parcours de lecture](../../START-HERE.md) · [Prototype](../../site/demo/index.html?tour)
+[Parcours de lecture](../../START-HERE.md) · [Prototype](https://phlppgdfry.github.io/occupational-health-analysis-case/demo/?tour)

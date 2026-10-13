@@ -3,7 +3,7 @@
 ## Twee minuten
 
 1. Lees de [one-pager](application-kit/executive/one-page-summary.md).
-2. Open de [demo met rondleiding](site/demo/index.html?tour), lokaal via `npm run dev`, daarna `http://localhost:8047/demo/?tour`.
+2. Open de [demo met rondleiding](https://phlppgdfry.github.io/occupational-health-analysis-case/demo/?tour), lokaal via `npm run dev`, daarna `http://localhost:8047/demo/?tour`.
 
 ## Vijf minuten
 
@@ -19,4 +19,4 @@ Volg [discovery](docs/01-discovery/discovery.md) → [requirements](docs/02-requ
 
 Voer `npm run check` uit. Vergelijk FR-04 / AC-15 in de catalogus met `execute()` in [domain.mjs](site/assets/domain.mjs) en de [test](tests/domain.test.mjs). Lees [ADR-02](docs/adr/02-capacity.md) om te zien waarom één slot-ID niet voldoende is. Browserchecks: `npm ci`, `npx playwright install chromium`, `npm run test:ui`.
 
-GitHub rendert HTML-bestanden als bron. De werkplek is lokaal uitvoerbaar; de Pages-workflow staat klaar voor publicatie zodra de eigenaar de repository publiek wil maken. [Screenshots](docs/screenshots/README.md) geven bewijs zonder JavaScript.
+De [publieke site](https://phlppgdfry.github.io/occupational-health-analysis-case/) en [rondleiding](https://phlppgdfry.github.io/occupational-health-analysis-case/demo/?tour) zijn zonder installatie te openen. De lokale instructies zijn voor codecontrole en eigen aanpassingen. [Screenshots](docs/screenshots/README.md) geven bewijs zonder JavaScript.

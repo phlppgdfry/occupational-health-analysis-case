@@ -6,7 +6,7 @@ Aster Preventie is een fictieve preventiedienst. Deze case verbindt klantvragen,
 
 > Independent portfolio case study based on a fictional organisation. It contains no confidential information from any real employer or the hiring company.
 
-[Start in 2/5/15 minuten](START-HERE.md) · [Case study](CASE_STUDY.md) · [Bewijs](EVIDENCE.md) · [Prototype](site/demo/index.html?tour) · [Screenshots](docs/screenshots/README.md)
+[Live case](https://phlppgdfry.github.io/occupational-health-analysis-case/) · [Rondleiding · 2 min](https://phlppgdfry.github.io/occupational-health-analysis-case/demo/?tour) · [Start in 2/5/15 minuten](START-HERE.md) · [Case study](CASE_STUDY.md) · [Bewijs](EVIDENCE.md)
 
 ![Werkplek](docs/screenshots/desktop.png)
 
@@ -48,7 +48,7 @@ npx playwright install chromium
 npm run test:ui
 ```
 
-De browsercheck start zelf een tijdelijke server en controleert kernflow, opslag, filters, rol, tour, desktop en 375 px. Screenshots staan in `docs/screenshots/`. CI voert dezelfde checks uit. De Pages-workflow publiceert alleen bij een publieke repo of een ondersteund betaald plan; publicatie blijft een bewuste keuze van de eigenaar.
+De browsercheck start zelf een tijdelijke server en controleert kernflow, opslag, filters, rol, tour, desktop en 375 px. Screenshots staan in `docs/screenshots/`. CI voert dezelfde checks uit. De publieke site wordt via GitHub Pages vanaf `site/` gepubliceerd; de workflow valideert de case opnieuw vóór deploy.
 
 Volledige formatvalidatie en herbouwbare exports staan in [uitwisselvalidatie](docs/06-validation/exchange-validation.md). PDF's herbouwen: installeer de optionele `requirements-artifacts.txt` en voer `python3 scripts/export-pdfs.py` uit. De [ontwerpreferentie](docs/design/concept.png) en [visuele verificatie](docs/design/verification.md) documenteren desktop, mobiele indeling en bewuste functionele aanvullingen.
 

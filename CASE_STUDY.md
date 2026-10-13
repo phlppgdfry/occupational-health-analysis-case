@@ -26,7 +26,7 @@ De demo blijft statisch zodat reviewers de case kunnen openen. Die keuze draagt 
 
 ## 5. Werkend en controleerbaar
 
-Het [prototype](site/demo/index.html?tour) gebruikt dezelfde [domeinregels](site/assets/domain.mjs) als de [acceptatietests](tests/domain.test.mjs). De achtstappenrondleiding brengt probleem, keuzes, uitvoering, resultaat en beperkingen samen. Berichten zijn gesimuleerd en de demoklok staat vast.
+Het [prototype](https://phlppgdfry.github.io/occupational-health-analysis-case/demo/?tour) gebruikt dezelfde [domeinregels](site/assets/domain.mjs) als de [acceptatietests](tests/domain.test.mjs). De achtstappenrondleiding brengt probleem, keuzes, uitvoering, resultaat en beperkingen samen. Berichten zijn gesimuleerd en de demoklok staat vast.
 
 Tests dekken onder andere ontbrekende gegevens, overlap voor arts/kamer/medewerker, tijdgrenzen, annulering, heropening, versies, retries en rollen. Browsertests tonen de daadwerkelijke klikflow, opslag, filters, tour en mobiele indeling. De repo bevat geen echte backendconcurrencytest; die is een expliciete voorwaarde in het productieplan.
 
@@ -44,4 +44,4 @@ Het [UAT-plan](docs/06-validation/uat.md) laat key users taakgericht beoordelen.
 
 De case toont een analyseontwerp en een getest browserprototype. Ze bewijst geen drie jaar professionele IT-ervaring, talenkennis, medische expertise of succesvolle productie-implementatie. Werkelijk begrip van de kandidaat moet in een gesprek en eigen aanpassingen zichtbaar worden.
 
-Begin bij [START-HERE](START-HERE.md), bekijk [EVIDENCE](EVIDENCE.md), of open de [demo met rondleiding](site/demo/index.html?tour).
+Begin bij [START-HERE](START-HERE.md), bekijk [EVIDENCE](EVIDENCE.md), of open de [demo met rondleiding](https://phlppgdfry.github.io/occupational-health-analysis-case/demo/?tour).
